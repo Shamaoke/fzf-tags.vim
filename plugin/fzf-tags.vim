@@ -3,6 +3,62 @@ vim9script
 # ::: Fzf Tags ::: #
 ##                ##
 
+import 'fzf-run.vim' as Fzf
 
+var spec = {
+  'fzf_default_command': $FZF_DEFAULT_COMMAND,
+
+  'set_fzf_data': ( ) =>
+    readfile('tags')
+      ->filter((_, v) => v !~ '^!')
+      ->map((_, v) => v->split('\t'))
+      ->map((_, v) => $"{v[3]->split(':')[1]}\t{v[0]}\t{v[1]}\t{v[4]->split(':')[1]}")
+      ->sort()
+      ->join('\n'),
+
+  'set_fzf_command': (data) => $"echo '{data}' | column --table --separator=\\\t --output-separator=\\\t --table-right=4",
+
+  'set_tmp_file': ( ) => tempname(),
+
+  'geometry': {
+    'width': 0.8,
+    'height': 0.8
+  },
+
+  'commands': {
+    'enter':  (entry) => $"edit +{entry->split('\t')->get(3)->trim()} {entry->split('\t')->get(2)}",
+    'ctrl-t': (entry) => $"tabedit +{entry->split('\t')->get(3)->trim()} {entry->split('\t')->get(2)}",
+    'ctrl-s': (entry) => $"split +{entry->split('\t')->get(3)->trim()} {entry->split('\t')->get(2)}",
+    'ctrl-v': (entry) => $"vsplit +{entry->split('\t')->get(3)->trim()} {entry->split('\t')->get(2)}"
+  },
+
+  'term_command': [
+    'fzf',
+    '--no-multi',
+    '--preview-window=border-left:+{4}-/2',
+    '--preview=bat --color=always --style=numbers --highlight-line={4} {3} 2>/dev/null || echo ""',
+    '--ansi',
+    '--delimiter=\t',
+    '--tabstop=1',
+    '--nth=1,2,3',
+    '--bind=alt-j:preview-down,alt-k:preview-up',
+    '--expect=enter,ctrl-t,ctrl-s,ctrl-v'
+  ],
+
+  'set_term_command_options': ( ) => [ ],
+
+  'term_options': {
+    'hidden': true,
+    'out_io': 'file'
+  },
+
+  'popup_options': {
+    'title': '─ ::: Fzf Tags ::: ─',
+    'border': [1, 1, 1, 1],
+    'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└']
+  }
+}
+
+command FzfTT Fzf.Run(spec)
 
 # vim: set textwidth=80 colorcolumn=80:
