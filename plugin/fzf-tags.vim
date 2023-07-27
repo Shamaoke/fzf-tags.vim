@@ -3,6 +3,8 @@ vim9script
 # ::: Fzf Tags ::: #
 ##                ##
 
+echomsg 'Fzf Tags has been loaded!'
+
 import 'fzf-run.vim' as Fzf
 
 var spec = {
@@ -59,6 +61,6 @@ var spec = {
   }
 }
 
-command FzfTT Fzf.Run(spec)
+command! FzfTT Fzf.Run(spec)
 
 # vim: set textwidth=80 colorcolumn=80:
