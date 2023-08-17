@@ -5,22 +5,19 @@ vim9script
 
 echomsg 'Fzf Tags has been loaded!'
 
-import 'fzf-run.vim' as Fzf
+import '../plugged/fzf-run.vim/import/fzf-run.vim' as Fzf
 
 var spec = {
-  'fzf_default_command': $FZF_DEFAULT_COMMAND,
-
-  'set_fzf_data': ( ) =>
+  'set_fzf_data': (data) =>
     readfile('tags')
       ->filter((_, v) => v !~ '^!')
       ->map((_, v) => v->split('\t'))
       ->map((_, v) => $"{v[3]->split(':')[1]}\t{v[0]}\t{v[1]}\t{v[4]->split(':')[1]}")
       ->sort()
-      ->join('\n'),
-
-  'set_fzf_command': (data) => $"echo '{data}' | column --table --separator=\\\t --output-separator=\\\t --table-right=4",
+      ->writefile(data),
 
   'set_tmp_file': ( ) => tempname(),
+  'set_tmp_data': ( ) => tempname(),
 
   'geometry': {
     'width': 0.8,
@@ -43,11 +40,12 @@ var spec = {
     '--delimiter=\t',
     '--tabstop=1',
     '--nth=1,2,3',
-    '--bind=alt-j:preview-down,alt-k:preview-up',
+    '--bind=alt-j:preview-down,alt-k:preview-up,alt-p:toggle-preview',
     '--expect=enter,ctrl-t,ctrl-s,ctrl-v'
   ],
 
-  'set_term_command_options': ( ) => [ ],
+  'set_term_command_options': (data) =>
+    [ $"--bind=start:reload^cat {data} | column --table --separator='\t' --output-separator='\t' --table-right=4^" ],
 
   'term_options': {
     'hidden': true,
