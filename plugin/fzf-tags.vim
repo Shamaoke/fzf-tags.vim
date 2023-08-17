@@ -3,9 +3,7 @@ vim9script
 # ::: Fzf Tags ::: #
 ##                ##
 
-echomsg 'Fzf Tags has been loaded!'
-
-import '../plugged/fzf-run.vim/import/fzf-run.vim' as Fzf
+import 'fzf-run.vim' as Fzf
 
 var spec = {
   'set_fzf_data': (data) =>
