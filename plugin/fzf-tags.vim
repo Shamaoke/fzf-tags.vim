@@ -51,7 +51,7 @@ var spec = {
   },
 
   'popup_options': {
-    'title': '─ ::: Fzf Tags ::: ─',
+    'title': '─ ::: Fzf Tags ::: (ctags --recurse --excmd=number --fields=Kzn) ─',
     'border': [1, 1, 1, 1],
     'borderchars': ['─', '│', '─', '│', '┌', '┐', '┘', '└']
   }
